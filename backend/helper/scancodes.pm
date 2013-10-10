@@ -219,9 +219,29 @@ our $keymap_vbox = {
 	'menu'         => 0xDD,
 };
 
+our $keymap_vnc = {
+	#
+	'backspace'    => 0xff08,
+	'tab'          => 0xff09,
+	'ret'          => 0xff0d,
+	'esc'          => 0xff1b,
+	'delete'       => 0xffff,
+	'home'         => 0xff50,
+	'f1'           => 0xffbe,
+	'f2'           => 0xffbf,
+	'f3'           => 0xffc0,
+	'f4'           => 0xffc1,
+	'f5'           => 0xffc2,
+	'f6'           => 0xffc3,
+	'shift'        => 0xffe1,
+	'ctrl'         => 0xffe3,
+	'alt'          => 0xffe9,
+};
+
 our $keymaps = {
 	'kvm2usb' => $keymap_kvm2usb,
-	'vbox' => $keymap_vbox
+	'vbox' => $keymap_vbox,
+    'vnc' => $keymap_vnc
 };
 
 sub init() {
