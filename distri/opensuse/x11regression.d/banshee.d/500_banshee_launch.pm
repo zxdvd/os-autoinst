@@ -12,7 +12,7 @@ use bmwqemu;
 
 sub is_applicable()
 {
-	return $ENV{DESKTOP} eq "gnome" && !$ENV{LIVECD};
+	return $ENV{DESKTOP} eq "gnome";
 } 
 
 
@@ -22,50 +22,22 @@ sub run()
 	my $self=shift;
 
         x11_start_program("gnome-terminal");       # Open a terminal
-        sendautotype("xdg-su -c 'zypper ref'\n");  # Refresh the repository.
+        sendautotype("su\n"); sleep 2;
         if ($password){                            # Send password to popup window  
               sendpassword;
                sendkeyw "ret";  
         }
         
-        # Waiting the zypper ref time
-        sleep 150;                                
-        sendkey "ret";
-        sleep 50;
-
-        # Close Terminal 
-        sendkey "alt-f4";
-        sleep 3;
-        sendkey "ret";
-        sleep 3;
- 
-        # Open terminal         
-        x11_start_program("gnome-terminal");             
-        sleep 6;
-
-        # Run the banshee installation via zypper
-        sendautotype("xdg-su -c 'zypper in banshee'\n");  
-        sleep 3;
-        if ($password){
-               sendpassword;
-               sendkeyw "ret";  
+        sendautotype("zypper -n in --no-rec banshee ; echo banshee finished > /dev/ttyS0\n");
+        sleep 5;
+        for(1..60) {
+            my $tmp=waitserial("banshee finished", 30);        #wait 900s for the installation
+            sendkey "ret"; sleep 1;
+            next unless $tmp==1;
         }
-   
-        sleep 3; 
-        sendkey "y";            
-        sendkey "ret"; sleep 3;
 
-        # Waiting the zypper in banshee time 
-        for (0..2) {
-           sleep 60;
-        }
-        sendkey "ret";
-        sleep 150;
-        sendkey "ret";
-
-        # Close the terminal
-        sendkey "alt-f4";
-        sendkey "ret";
+    sendkey "alt-f4"; sleep 1;              #close the gnome-terminal
+    sendkey "ret"; sleep 1;                 #confirm the close
 
         # Launch banshee
 	x11_start_program("banshee");  
